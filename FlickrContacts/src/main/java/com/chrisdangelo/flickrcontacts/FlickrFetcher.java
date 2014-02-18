@@ -1,13 +1,14 @@
 package com.chrisdangelo.flickrcontacts;
 
+import android.net.Uri;
+import android.util.Log;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by chrisdangelo on 2/17/14.
@@ -15,15 +16,19 @@ import java.net.URL;
  * Helpful resources:
  * Android Programming: Big Nerd Ranch Guide (2013) Ch. 26
  * http://developer.android.com/training/basics/network-ops/connecting.html
+ * http://developer.android.com/training/basics/network-ops/xml.html
  */
 public class FlickrFetcher {
     private static final String TAG = "FlickrFetchrLogTag";
 
+    /*
+     * Assignment described using .search REST call. Response from flickr:
+     * Parameterless searches have been disabled. Please use flickr.photos.getRecent instead
+     */
     private static final String ENDPOINT = "http://api.flickr.com/services/rest/";
     private static final String API_KEY = "0e5ce78ee1c6a238b80667055f891480";
-    private static final String METHOD_GET_RECENT = "flickr.photos.getRecent";
-    private static final String PARAM_EXTRAS = "extras";
-    private static final String EXTRA_SMALL_URL = "url_s";
+    private static final String METHOD = "flickr.photos.getRecent";
+    private static final String EXTRAS = "date_taken,owner_name,description";
 
     private static final String XML_PHOTO = "photo";
 
@@ -48,5 +53,23 @@ public class FlickrFetcher {
         }
     }
 
+    public ArrayList<FlickrPhoto> fetchPhotos(String searchTerm) {
+        ArrayList<FlickrPhoto> photos = new ArrayList<FlickrPhoto>();
+
+        try {
+            String url = Uri.parse(ENDPOINT).buildUpon()
+                    .appendQueryParameter("method", METHOD)
+                    .appendQueryParameter("api_key", API_KEY)
+                    .appendQueryParameter("extras", EXTRAS)
+                    .build().toString();
+            Log.i(TAG, "Url being sent: " + url);
+            String xmlString = getUrl(url);
+            Log.i(TAG, "Received xml: " + xmlString);
+        } catch (IOException ioe) {
+            Log.e(TAG, "Failed to fetch items" + ioe);
+        }
+
+        return photos;
+    }
 
 }

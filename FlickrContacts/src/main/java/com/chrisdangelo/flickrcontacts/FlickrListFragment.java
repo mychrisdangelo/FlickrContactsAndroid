@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -20,6 +19,7 @@ import java.util.ArrayList;
  * Android Programming: Big Nerd Ranch Guide (2013) Ch. 10
  * Android Programming: Big Nerd Ranch Guide (2013) Ch. 26
  * http://developer.android.com/training/basics/network-ops/connecting.html
+ * http://www.deitel.com/articles/java_tutorials/20060106/VariableLengthArgumentLists.html
  */
 public class FlickrListFragment extends ListFragment {
     private static final String LOG_TAG = "FlickrListFragmentLogTag";
@@ -34,6 +34,8 @@ public class FlickrListFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         mSearchString = (String)getActivity().getIntent().getSerializableExtra(EXTRA_SEARCH_STRING);
         Log.i(LOG_TAG, "List received " + mSearchString);
+
+        new FetchItemsTask().execute(mSearchString);
 
         // TODO remove
         tmpFillPhotos();
@@ -65,11 +67,10 @@ public class FlickrListFragment extends ListFragment {
         return fragment;
     }
 
-    private class FetchItemsTask extends AsyncTask<Void, Void, ArrayList<FlickrPhoto>> {
+    private class FetchItemsTask extends AsyncTask<String, Void, ArrayList<FlickrPhoto>> {
         @Override
-        protected ArrayList<FlickrPhoto> doInBackground(Void... params) {
-            // TODO
-            return null;
+        protected ArrayList<FlickrPhoto> doInBackground(String... params) {
+            return new FlickrFetcher().fetchPhotos(params[0]);
         }
 
         @Override
