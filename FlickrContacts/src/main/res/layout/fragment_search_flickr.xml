@@ -5,14 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="com.chrisdangelo.flickrcontacts.SearchFlickr$PlaceholderFragment">
+    tools:context="com.chrisdangelo.flickrcontacts.SearchFlickr.SearchFlickrFragment">
 
     <EditText
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:layout_gravity="center_horizontal"
-        android:id="@+id/search_text_edit"
+        android:id="@+id/search_text_field"
         android:hint="@string/keyword_search_hint"
         />
 

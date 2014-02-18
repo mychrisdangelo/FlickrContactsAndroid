@@ -6,5 +6,8 @@
     <string name="pick_contacts_button">Pick Contact</string>
     <string name="search_button">Search Flickr</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_flickr_list">FlickrList</string>
+    <string name="search_results_title">Search Results</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
