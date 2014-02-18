@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FlickrContacts</string>
+    <string name="keyword_search_hint">Tag Name</string>
+    <string name="pick_contacts_button">Pick Contact</string>
+    <string name="search_button">Search Flickr</string>
+    <string name="action_settings">Settings</string>
+
+</resources>
