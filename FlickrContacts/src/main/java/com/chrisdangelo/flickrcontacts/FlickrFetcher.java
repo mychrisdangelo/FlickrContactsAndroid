@@ -22,6 +22,7 @@ import java.util.ArrayList;
  * Android Programming: Big Nerd Ranch Guide (2013) Ch. 26
  * http://developer.android.com/training/basics/network-ops/connecting.html
  * http://developer.android.com/training/basics/network-ops/xml.html
+ * http://developer.android.com/reference/org/xmlpull/v1/XmlPullParser.html
  */
 public class FlickrFetcher {
     private static final String TAG = "FlickrFetchrLogTag";
@@ -96,29 +97,37 @@ public class FlickrFetcher {
 
     void parseItems(ArrayList<FlickrPhoto> photos, XmlPullParser parser) throws XmlPullParserException, IOException {
         int eventType = parser.next();
+        FlickrPhoto photo = null;
 
         while (eventType != XmlPullParser.END_DOCUMENT) {
             if (eventType == XmlPullParser.START_TAG && XML_PHOTO.equals(parser.getName())) {
                 String ownerName = parser.getAttributeValue(null, XML_OWNERNAME);
                 String dateTaken = parser.getAttributeValue(null, XML_DATETAKEN);
                 String title = parser.getAttributeValue(null, XML_TITLE);
-// TODO may not work
-//                String description = parser.getAttributeValue(null, XML_DESCRIPTION);
                 String farm = parser.getAttributeValue(null, XML_FARM);
                 String server = parser.getAttributeValue(null, XML_SERVER);
                 String id = parser.getAttributeValue(null, XML_ID);
                 String secret = parser.getAttributeValue(null, XML_SECRET);
 
-                FlickrPhoto photo = new FlickrPhoto();
+                photo = new FlickrPhoto();
                 photo.setOwnerName(ownerName);
                 photo.setDateTaken(dateTaken);
                 photo.setTitle(title);
-//                photo.setDescription(description);
+
                 photo.setFarm(farm);
                 photo.setServer(server);
                 photo.setId(id);
                 photo.setSecret(secret);
+
+            } else if (eventType == XmlPullParser.START_TAG && XML_DESCRIPTION.equals(parser.getName())) {
+                eventType = parser.next();
+                if (eventType == XmlPullParser.TEXT) {
+                    String description = parser.getText();
+                    photo.setDescription(description);
+                }
+
                 photos.add(photo);
+
             }
 
             eventType = parser.next();

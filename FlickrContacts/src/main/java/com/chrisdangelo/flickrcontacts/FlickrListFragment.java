@@ -93,7 +93,7 @@ public class FlickrListFragment extends ListFragment {
             // TODO fill in with extra information
             TextView subtitleTextView = (TextView)convertView.
                     findViewById(R.id.photo_item_subtitle);
-            subtitleTextView.setText("Subtitle Placeholder");
+            subtitleTextView.setText(p.getDescription());
 
             // TODO do fancy image fetching
 
