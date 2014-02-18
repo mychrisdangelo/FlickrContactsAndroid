@@ -7,16 +7,61 @@ package com.chrisdangelo.flickrcontacts;
  * Android Programming: Big Nerd Ranch Guide (2013) Ch. 26
  */
 public class FlickrPhoto {
+    private String mOwnerName;
+    private String mDateTaken;
+    private String mTitle;
+    private String mDescription;
+    private String mFarm;
+    private String mServer;
     private String mId;
-    private String mCaption;
-    private String mUrl;
+    private String mSecret;
 
-    public String getCaption() {
-        return mCaption;
+    public String getOwnerName() {
+        return mOwnerName;
     }
 
-    public void setCaption(String caption) {
-        mCaption = caption;
+    public void setOwnerName(String ownerName) {
+        mOwnerName = ownerName;
+    }
+
+    public String getDateTaken() {
+        return mDateTaken;
+    }
+
+    public void setDateTaken(String dateTaken) {
+        mDateTaken = dateTaken;
+    }
+
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setTitle(String title) {
+        mTitle = title;
+    }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public void setDescription(String description) {
+        mDescription = description;
+    }
+
+    public String getFarm() {
+        return mFarm;
+    }
+
+    public void setFarm(String farm) {
+        mFarm = farm;
+    }
+
+    public String getServer() {
+        return mServer;
+    }
+
+    public void setServer(String server) {
+        mServer = server;
     }
 
     public String getId() {
@@ -27,15 +72,11 @@ public class FlickrPhoto {
         mId = id;
     }
 
-    public String getUrl() {
-        return mUrl;
+    public String getSecret() {
+        return mSecret;
     }
 
-    public void setUrl(String url) {
-        mUrl = url;
-    }
-
-    public String toString() {
-        return mCaption;
+    public void setSecret(String secret) {
+        mSecret = secret;
     }
 }

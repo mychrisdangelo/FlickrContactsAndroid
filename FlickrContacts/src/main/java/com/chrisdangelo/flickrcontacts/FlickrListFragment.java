@@ -37,20 +37,12 @@ public class FlickrListFragment extends ListFragment {
 
         new FetchItemsTask().execute(mSearchString);
 
-        // TODO remove
-        tmpFillPhotos();
-
-        PhotoAdapter adapter = new PhotoAdapter(mPhotos);
-        setListAdapter(adapter);
+        setupAdapter();
     }
 
-    private void tmpFillPhotos() {
-        mPhotos = new ArrayList<FlickrPhoto>();
-
-        for (int i = 0; i < 10; i++) {
-            FlickrPhoto p = new FlickrPhoto();
-            p.setCaption("Photo #" + i);
-            mPhotos.add(p);
+    private void setupAdapter() {
+        if (mPhotos != null) {
+            setListAdapter(new PhotoAdapter(mPhotos));
         }
     }
 
@@ -75,7 +67,8 @@ public class FlickrListFragment extends ListFragment {
 
         @Override
         protected void onPostExecute(ArrayList<FlickrPhoto> photos) {
-            // TODO
+            mPhotos = photos;
+            setupAdapter();
         }
     }
 
@@ -95,7 +88,7 @@ public class FlickrListFragment extends ListFragment {
 
             TextView titleTextView = (TextView)convertView.
                     findViewById(R.id.photo_item_title);
-            titleTextView.setText(p.getCaption());
+            titleTextView.setText(p.getTitle());
 
             // TODO fill in with extra information
             TextView subtitleTextView = (TextView)convertView.
