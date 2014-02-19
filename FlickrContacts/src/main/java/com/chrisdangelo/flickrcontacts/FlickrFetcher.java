@@ -67,10 +67,12 @@ public class FlickrFetcher {
         }
     }
 
+
     public ArrayList<FlickrPhoto> fetchPhotos(String searchTerm) {
         ArrayList<FlickrPhoto> photos = new ArrayList<FlickrPhoto>();
 
         try {
+            // TODO fix this warning
             String url = Uri.parse(ENDPOINT).buildUpon()
                     .appendQueryParameter("method", METHOD)
                     .appendQueryParameter("api_key", API_KEY)

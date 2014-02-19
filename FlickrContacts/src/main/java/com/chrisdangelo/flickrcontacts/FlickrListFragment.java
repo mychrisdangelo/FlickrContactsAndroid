@@ -90,10 +90,17 @@ public class FlickrListFragment extends ListFragment {
                     findViewById(R.id.photo_item_title);
             titleTextView.setText(p.getTitle());
 
-            // TODO fill in with extra information
             TextView subtitleTextView = (TextView)convertView.
                     findViewById(R.id.photo_item_subtitle);
             subtitleTextView.setText(p.getDescription());
+
+            TextView ownerTextView = (TextView)convertView.
+                    findViewById(R.id.photo_item_ownersname);
+            ownerTextView.setText(p.getOwnerName());
+
+            TextView dateTakenTextView = (TextView)convertView.
+                    findViewById(R.id.photo_item_datetaken);
+            dateTakenTextView.setText(p.getDateTaken());
 
             // TODO do fancy image fetching
 
