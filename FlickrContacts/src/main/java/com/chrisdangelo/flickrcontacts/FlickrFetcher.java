@@ -1,5 +1,7 @@
 package com.chrisdangelo.flickrcontacts;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.util.Log;
 
@@ -27,13 +29,9 @@ import java.util.ArrayList;
 public class FlickrFetcher {
     private static final String TAG = "FlickrFetchrLogTag";
 
-    /*
-     * Assignment described using .search REST call. Response from flickr:
-     * Parameterless searches have been disabled. Please use flickr.photos.getRecent instead
-     */
     private static final String ENDPOINT = "http://api.flickr.com/services/rest/";
     private static final String API_KEY = "0e5ce78ee1c6a238b80667055f891480";
-    private static final String METHOD = "flickr.photos.getRecent";
+    private static final String METHOD = "flickr.photos.search";
     private static final String EXTRAS = "date_taken,owner_name,description";
 
     private static final String XML_PHOTO = "photo";
@@ -46,7 +44,7 @@ public class FlickrFetcher {
     private static final String XML_ID = "id";
     private static final String XML_SECRET = "secret";
 
-    public String getUrl(String urlString) throws IOException {
+    public byte[] getUrlBytes(String urlString) throws IOException {
         URL url = new URL(urlString);
         HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 
@@ -61,10 +59,14 @@ public class FlickrFetcher {
                 out.write(buffer, 0, bytesRead);
             }
             out.close();
-            return new String(out.toByteArray());
+            return out.toByteArray();
         } finally {
             connection.disconnect();
         }
+    }
+
+    public String getUrl(String urlString) throws IOException {
+        return new String(getUrlBytes(urlString));
     }
 
 
@@ -76,6 +78,7 @@ public class FlickrFetcher {
             String url = Uri.parse(ENDPOINT).buildUpon()
                     .appendQueryParameter("method", METHOD)
                     .appendQueryParameter("api_key", API_KEY)
+                    .appendQueryParameter("tags", searchTerm)
                     .appendQueryParameter("extras", EXTRAS)
                     .build().toString();
             Log.i(TAG, "Url being sent: " + url);

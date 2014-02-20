@@ -10,7 +10,7 @@
     <EditText
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="20dp"
         android:layout_gravity="center_horizontal"
         android:id="@+id/search_text_field"
         android:hint="@string/keyword_search_hint"

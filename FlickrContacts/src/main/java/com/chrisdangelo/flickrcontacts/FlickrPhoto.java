@@ -1,5 +1,7 @@
 package com.chrisdangelo.flickrcontacts;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by chrisdangelo on 2/17/14.
  *
@@ -15,6 +17,19 @@ public class FlickrPhoto {
     private String mServer;
     private String mId;
     private String mSecret;
+
+    public String getPhotoUrlSmall() {
+        return getPhotoPartialUrl() + "_s.jpg";
+    }
+
+    public String getPhotoUrlMedium() {
+        return getPhotoPartialUrl() + "_m.jpg";
+    }
+
+    // assumes all attributes in place.
+    private String getPhotoPartialUrl() {
+        return "http://farm" + mFarm + ".staticflickr.com/" + mServer + "/" + mId + "_" + mSecret;
+    }
 
     public String getOwnerName() {
         return mOwnerName;

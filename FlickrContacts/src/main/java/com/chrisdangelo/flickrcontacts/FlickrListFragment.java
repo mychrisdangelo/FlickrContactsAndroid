@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class FlickrListFragment extends ListFragment {
     private String mSearchString;
     private ArrayList<FlickrPhoto> mPhotos;
     public static final String EXTRA_SEARCH_STRING = "com.chrisdangelo.flickrcontacts.search_string";
+//    ThumbnailDownloader<ImageView> mThumbnailThread;
 
     // TODO display error if there is no network connection
 
@@ -84,25 +86,31 @@ public class FlickrListFragment extends ListFragment {
                         .inflate(R.layout.list_item_photo, null);
             }
 
+            // Set all the lightweight items. The photos we will queue
+            // for another thread to pick up
             FlickrPhoto p = getItem(position);
 
-            TextView titleTextView = (TextView)convertView.
-                    findViewById(R.id.photo_item_title);
+            TextView titleTextView = (TextView)convertView
+                    .findViewById(R.id.photo_item_title);
             titleTextView.setText(p.getTitle());
 
-            TextView subtitleTextView = (TextView)convertView.
-                    findViewById(R.id.photo_item_subtitle);
+            TextView subtitleTextView = (TextView)convertView
+                    .findViewById(R.id.photo_item_subtitle);
             subtitleTextView.setText(p.getDescription());
 
-            TextView ownerTextView = (TextView)convertView.
-                    findViewById(R.id.photo_item_ownersname);
+            TextView ownerTextView = (TextView)convertView
+                    .findViewById(R.id.photo_item_ownersname);
             ownerTextView.setText(p.getOwnerName());
 
-            TextView dateTakenTextView = (TextView)convertView.
-                    findViewById(R.id.photo_item_datetaken);
+            TextView dateTakenTextView = (TextView)convertView
+                    .findViewById(R.id.photo_item_datetaken);
             dateTakenTextView.setText(p.getDateTaken());
 
-            // TODO do fancy image fetching
+            ImageView imageView = (ImageView)convertView
+                    .findViewById(R.id.photo_item_image_view);
+            imageView.setImageResource(R.drawable.placeholder);
+
+//            mThumbnailThread.queueThumbnail(imageView, photo.getPhotoUrlSmall());
 
             return convertView;
         }
