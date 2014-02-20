@@ -19,11 +19,11 @@ public class FlickrPhoto {
     private String mSecret;
 
     public String getPhotoUrlSmall() {
-        return getPhotoPartialUrl() + "_s.jpg";
+        return getPhotoPartialUrl() + "_m.jpg";
     }
 
     public String getPhotoUrlMedium() {
-        return getPhotoPartialUrl() + "_m.jpg";
+        return getPhotoPartialUrl() + "_c.jpg";
     }
 
     // assumes all attributes in place.

@@ -99,7 +99,6 @@ public class FlickrFetcher {
         return photos;
     }
 
-
     void parseItems(ArrayList<FlickrPhoto> photos, XmlPullParser parser) throws XmlPullParserException, IOException {
         int eventType = parser.next();
         FlickrPhoto photo = null;
@@ -130,9 +129,7 @@ public class FlickrFetcher {
                     String description = parser.getText();
                     photo.setDescription(description);
                 }
-
                 photos.add(photo);
-
             }
 
             eventType = parser.next();
@@ -145,6 +142,4 @@ public class FlickrFetcher {
      *     farm="8" title="" ispublic="1" isfriend="0" isfamily="0" datetaken="2014-02-18 20:13:35"
      *     datetakengranularity="0" ownername="TheRsport"> <description />
      */
-
-
 }

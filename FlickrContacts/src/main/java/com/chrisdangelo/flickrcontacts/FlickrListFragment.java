@@ -1,13 +1,18 @@
 package com.chrisdangelo.flickrcontacts;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,23 +28,42 @@ import java.util.ArrayList;
  * http://www.deitel.com/articles/java_tutorials/20060106/VariableLengthArgumentLists.html
  */
 public class FlickrListFragment extends ListFragment {
-    private static final String LOG_TAG = "FlickrListFragmentLogTag";
+    private static final String TAG = "FlickrListFragmentLogTag";
     private String mSearchString;
     private ArrayList<FlickrPhoto> mPhotos;
     public static final String EXTRA_SEARCH_STRING = "com.chrisdangelo.flickrcontacts.search_string";
-//    ThumbnailDownloader<ImageView> mThumbnailThread;
-
-    // TODO display error if there is no network connection
+    ThumbnailDownloader<ImageView> mThumbnailThread;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSearchString = (String)getActivity().getIntent().getSerializableExtra(EXTRA_SEARCH_STRING);
-        Log.i(LOG_TAG, "List received " + mSearchString);
+        Log.i(TAG, "List received " + mSearchString);
 
         new FetchItemsTask().execute(mSearchString);
 
+        mThumbnailThread = new ThumbnailDownloader<ImageView>(new Handler());
+        mThumbnailThread.setListener(new ThumbnailDownloader.Listener<ImageView>() {
+            @Override
+            public void onThumbnailDownloaded(ImageView imageView, Bitmap thumbnail) {
+                if (isVisible()) {
+                    imageView.setImageBitmap(thumbnail);
+                }
+            }
+        });
+        mThumbnailThread.start();
+        mThumbnailThread.getLooper();
+        Log.i(TAG, "Background thread started");
+
         setupAdapter();
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        FlickrPhoto p = ((PhotoAdapter)getListAdapter()).getItem(position);
+
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(p.getPhotoUrlMedium()));
+        startActivity(i);
     }
 
     private void setupAdapter() {
@@ -48,9 +72,6 @@ public class FlickrListFragment extends ListFragment {
         }
     }
 
-    /*
-     * This design comes from
-     */
     public static FlickrListFragment newInstance(String searchString) {
         Bundle args = new Bundle();
         args.putSerializable(EXTRA_SEARCH_STRING, searchString);
@@ -100,17 +121,17 @@ public class FlickrListFragment extends ListFragment {
 
             TextView ownerTextView = (TextView)convertView
                     .findViewById(R.id.photo_item_ownersname);
-            ownerTextView.setText(p.getOwnerName());
+            ownerTextView.setText("Owner: " + p.getOwnerName());
 
             TextView dateTakenTextView = (TextView)convertView
                     .findViewById(R.id.photo_item_datetaken);
-            dateTakenTextView.setText(p.getDateTaken());
+            dateTakenTextView.setText("Date: " + p.getDateTaken());
 
             ImageView imageView = (ImageView)convertView
                     .findViewById(R.id.photo_item_image_view);
             imageView.setImageResource(R.drawable.placeholder);
 
-//            mThumbnailThread.queueThumbnail(imageView, photo.getPhotoUrlSmall());
+            mThumbnailThread.queueThumbnail(imageView, p.getPhotoUrlSmall());
 
             return convertView;
         }
