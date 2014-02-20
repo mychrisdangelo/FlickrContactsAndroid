@@ -27,6 +27,7 @@ public class FlickrPhoto {
     }
 
     // assumes all attributes in place.
+    // based on http://www.flickr.com/services/api/misc.urls.html
     private String getPhotoPartialUrl() {
         return "http://farm" + mFarm + ".staticflickr.com/" + mServer + "/" + mId + "_" + mSecret;
     }
