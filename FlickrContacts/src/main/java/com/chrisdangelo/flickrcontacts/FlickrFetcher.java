@@ -33,6 +33,7 @@ public class FlickrFetcher {
     private static final String API_KEY = "0e5ce78ee1c6a238b80667055f891480";
     private static final String METHOD = "flickr.photos.search";
     private static final String EXTRAS = "date_taken,owner_name,description";
+    private static final String PER_PAGE = "25";
 
     private static final String XML_PHOTO = "photo";
     private static final String XML_OWNERNAME = "ownername";
@@ -80,6 +81,7 @@ public class FlickrFetcher {
                     .appendQueryParameter("api_key", API_KEY)
                     .appendQueryParameter("tags", searchTerm)
                     .appendQueryParameter("extras", EXTRAS)
+                    .appendQueryParameter("per_page", PER_PAGE)
                     .build().toString();
             Log.i(TAG, "Url being sent: " + url);
             String xmlString = getUrl(url);

@@ -10,9 +10,11 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 public class FlickrListFragment extends ListFragment {
     private static final String TAG = "FlickrListFragmentLogTag";
     private String mSearchString;
+    private int mCurrentPage = 0;
     private ArrayList<FlickrPhoto> mPhotos;
     public static final String EXTRA_SEARCH_STRING = "com.chrisdangelo.flickrcontacts.search_string";
     ThumbnailDownloader<ImageView> mThumbnailThread;
@@ -136,5 +139,6 @@ public class FlickrListFragment extends ListFragment {
             return convertView;
         }
     }
+
 
 }
