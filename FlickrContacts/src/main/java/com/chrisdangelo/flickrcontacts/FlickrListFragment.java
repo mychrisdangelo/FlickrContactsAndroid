@@ -55,29 +55,58 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSearchString = (String)getActivity().getIntent().getSerializableExtra(EXTRA_SEARCH_STRING);
-        Log.i(TAG, "List received " + mSearchString);
+        Log.i(TAG, "List received search string: " + mSearchString);
 
         mFooterViewExists = false;
         mPhotos = new ArrayList<FlickrPhoto>();
         new FetchItemsTask().execute(mSearchString, Integer.toString(mCurrentPage));
 
+        /*
+         * By default the Handler will attach itself to the Looper for the current thread.
+         * Since this Handler is created in onCreate() it will be attached to teh main thead's
+         * Looper.
+         */
         mThumbnailThread = new ThumbnailDownloader<ImageView>(new Handler());
         mThumbnailThread.setListener(new ThumbnailDownloader.Listener<ImageView>() {
             @Override
             public void onThumbnailDownloaded(ImageView imageView, Bitmap thumbnail) {
+                /*
+                 * By the time the thumbnail is done downloading
+                 * the image may be off screen. We are only interesting in setting the photo
+                 * if it is on screen
+                 */
                 if (isVisible()) {
                     imageView.setImageBitmap(thumbnail);
                 }
             }
         });
+        /*
+         * HandlerThread.start() should always be called before HandlerThread.getLooper()
+         */
         mThumbnailThread.start();
         mThumbnailThread.getLooper();
         Log.i(TAG, "Background thread started");
 
-        setupAdapter();
-
+        if (mPhotos != null) {
+            setListAdapter(new PhotoAdapter(mPhotos));
+        }
     }
 
+    /*
+     * When the fragment is destroyed we must destroy the thread we created
+     * otherwise it will live on like a OS Zombie
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mThumbnailThread.quit();
+        Log.i(TAG, "Background thread destroyed");
+    }
+
+    /*
+     * Only show footer view when we have loaded the list.
+     * Footer view will show a "loading" animation for the infinite scrolling/load more feature
+     */
     private void addLoadingFooterView() {
         ListView lv = getListView();
         View v = getActivity().getLayoutInflater().inflate(R.layout.list_footer, null);
@@ -94,12 +123,6 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
         startActivity(i);
     }
 
-    private void setupAdapter() {
-        if (mPhotos != null) {
-            setListAdapter(new PhotoAdapter(mPhotos));
-        }
-    }
-
     public static FlickrListFragment newInstance(String searchString) {
         Bundle args = new Bundle();
         args.putSerializable(EXTRA_SEARCH_STRING, searchString);
@@ -110,6 +133,22 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
         return fragment;
     }
 
+    /*
+     * AsyncTask <Params, Progress, Result>
+     * The above Generics arguments are the types that will be used in doInBackground and
+     * onPost Execute
+     *
+     * Params: will be used as the argument types in the variable type arguments of
+     * doInBackground. It is used when the caller calls .execute(Params...)
+     *
+     * Void: is used if we were in some way displaying/measuring the progress of this
+     * asynchronous task. Here we are not.
+     *
+     * Result: Is the return value type of doInBackground and therefore/also the argument
+     * that is accepted by onPostExecute. onPostExecute(Result) is called after and with the
+     * result value from doInBackground.
+     *
+     */
     private class FetchItemsTask extends AsyncTask<String, Void, ArrayList<FlickrPhoto>> {
         @Override
         protected ArrayList<FlickrPhoto> doInBackground(String... params) {
