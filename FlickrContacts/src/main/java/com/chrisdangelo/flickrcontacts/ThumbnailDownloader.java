@@ -13,11 +13,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
+/*
  * Created by chrisdangelo on 2/18/14.
  *
  * Helfpul Resource:
- * Android Programming: Big Nerd Ranch Guide (2013) Ch. 27
+ * Android Programming: Big Nerd Ranch Guide (2013) Ch. 27<--NOTE
+ *
+ * NOTE: Essential design of this class comes from Ch. 27. It is perhaps simpler to implement
+ * Asynchronous loading of images using AsyncTask alone but Ch. 27 advocates this level of indirection
+ * because calling AsyncTask repeatedly for this kind of task is not robust.
+ *
+ * In this challenging threading design I have used the Ch. 27 implementation to complete the requirements
+ * of the assignment. I have commented heavily to demonstrate my understanding of the design I learned
+ * from Ch. 27.
  */
 public class ThumbnailDownloader<Token> extends HandlerThread {
     private static final String TAG = "ThumbnailDownloader";

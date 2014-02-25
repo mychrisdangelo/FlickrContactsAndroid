@@ -20,13 +20,14 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
+/*
  * Created by chrisdangelo on 2/17/14.
  *
  * Helpful sources:
  * Android Programming: Big Nerd Ranch Guide (2013) Ch. 9
  * Android Programming: Big Nerd Ranch Guide (2013) Ch. 10
- * Android Programming: Big Nerd Ranch Guide (2013) Ch. 26
+ * Android Programming: Big Nerd Ranch Guide (2013) Ch. 26<--NOTE
+ * Android Programming: Big Nerd Ranch Guide (2013) Ch. 27<--NOTE
  * http://developer.android.com/training/basics/network-ops/connecting.html
  * http://www.deitel.com/articles/java_tutorials/20060106/VariableLengthArgumentLists.html
  * http://stackoverflow.com/questions/19351160/implements-onscrolllistener-inside-listfragment
@@ -35,6 +36,10 @@ import java.util.ArrayList;
  * http://stackoverflow.com/questions/2250770/how-to-refresh-android-listview
  * http://stackoverflow.com/questions/21374432/cant-set-a-custom-listview-on-listfragment
  * https://github.com/shontauro/android-pulltorefresh-and-loadmore
+ *
+ * NOTE: The essential design of the images loading "on the fly" is based on Ch. 27. The design of
+ * this class is fairly generic but I have provided verbose comments to fully demonstrate understanding
+ * of my implementation and the techniques I learned from Chapter 26 & 27.
  */
 public class FlickrListFragment extends ListFragment implements OnScrollListener {
     private static final String TAG = "FlickrListFragmentLogTag";

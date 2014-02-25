@@ -26,8 +26,14 @@ public class FlickrPhoto {
         return getPhotoPartialUrl() + "_c.jpg";
     }
 
-    // assumes all attributes in place.
-    // based on http://www.flickr.com/services/api/misc.urls.html
+    /*
+     * assumes all attributes in place.
+     * based on http://www.flickr.com/services/api/misc.urls.html
+     *
+     * While it is possible to request the Medium and Small url directly. I assume that
+     * pulling additional bits from the server is more time consuming then performing this
+     * string concatenation locally.
+     */
     private String getPhotoPartialUrl() {
         return "http://farm" + mFarm + ".staticflickr.com/" + mServer + "/" + mId + "_" + mSecret;
     }

@@ -41,6 +41,8 @@ Sources
 * http://stackoverflow.com/questions/21374432/cant-set-a-custom-listview-on-listfragment
 * https://github.com/shontauro/android-pulltorefresh-and-loadmore
 
-Note:
-
-Enormously useful to my learning the Android platform was [Android Programming: Big Nerd Ranch Guide 2013](http://www.bignerdranch.com/book/android_the_big_nerd_ranch_guide). To understand the basics of Android programming I worked through nearly every one of the book's examples. The book's examples also provided a template for the end design of this project. I have cited the book's influence on each source code document.
+Enormously useful to my learning the Android platform was
+[Android Programming: Big Nerd Ranch Guide 2013](http://www.bignerdranch.com/book/android_the_big_nerd_ranch_guide).
+To understand the basics of Android programming I worked through nearly every one of the book's examples.
+The book contains examples that provided a template for my design specifically in Chapters 9, 10,
+21, 26 & 27. I have noted the influence of these chapters in specific source code files.
