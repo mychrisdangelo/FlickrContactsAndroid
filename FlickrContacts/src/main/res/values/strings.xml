@@ -9,6 +9,6 @@
     <string name="title_activity_flickr_list">FlickrList</string>
     <string name="search_results_title">Search Results</string>
     <string name="hello_world">Hello world!</string>
-    <string name="loading_text">Loading More Photos</string>
+    <string name="loading_text">Loading More Photos...</string>
 
 </resources>

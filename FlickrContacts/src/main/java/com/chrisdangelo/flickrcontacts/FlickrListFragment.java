@@ -8,13 +8,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -28,8 +29,14 @@ import java.util.ArrayList;
  * Android Programming: Big Nerd Ranch Guide (2013) Ch. 26
  * http://developer.android.com/training/basics/network-ops/connecting.html
  * http://www.deitel.com/articles/java_tutorials/20060106/VariableLengthArgumentLists.html
+ * http://stackoverflow.com/questions/19351160/implements-onscrolllistener-inside-listfragment
+ * http://stackoverflow.com/questions/10316743/detect-end-of-scrollview
+ * http://stackoverflow.com/questions/12206259/adding-footer-to-one-of-the-listfragments-listview-automatically-adds-footer-to
+ * http://stackoverflow.com/questions/2250770/how-to-refresh-android-listview
+ * http://stackoverflow.com/questions/21374432/cant-set-a-custom-listview-on-listfragment
+ * https://github.com/shontauro/android-pulltorefresh-and-loadmore
  */
-public class FlickrListFragment extends ListFragment {
+public class FlickrListFragment extends ListFragment implements OnScrollListener {
     private static final String TAG = "FlickrListFragmentLogTag";
     private String mSearchString;
     private int mCurrentPage = 0;
@@ -37,13 +44,21 @@ public class FlickrListFragment extends ListFragment {
     public static final String EXTRA_SEARCH_STRING = "com.chrisdangelo.flickrcontacts.search_string";
     ThumbnailDownloader<ImageView> mThumbnailThread;
 
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+//    {
+//        View view = inflater.inflate(R.layout.list_fragment, container, false);
+//        return view;
+//    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mSearchString = (String)getActivity().getIntent().getSerializableExtra(EXTRA_SEARCH_STRING);
         Log.i(TAG, "List received " + mSearchString);
 
-        new FetchItemsTask().execute(mSearchString);
+        mPhotos = new ArrayList<FlickrPhoto>();
+        new FetchItemsTask().execute(mSearchString, Integer.toString(mCurrentPage));
 
         mThumbnailThread = new ThumbnailDownloader<ImageView>(new Handler());
         mThumbnailThread.setListener(new ThumbnailDownloader.Listener<ImageView>() {
@@ -59,6 +74,15 @@ public class FlickrListFragment extends ListFragment {
         Log.i(TAG, "Background thread started");
 
         setupAdapter();
+
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstance) {
+        ListView lv = getListView();
+        View v = getActivity().getLayoutInflater().inflate(R.layout.list_footer, null);
+        lv.addFooterView(v);
+        lv.setOnScrollListener(this);
     }
 
     @Override
@@ -88,13 +112,14 @@ public class FlickrListFragment extends ListFragment {
     private class FetchItemsTask extends AsyncTask<String, Void, ArrayList<FlickrPhoto>> {
         @Override
         protected ArrayList<FlickrPhoto> doInBackground(String... params) {
-            return new FlickrFetcher().fetchPhotos(params[0]);
+            return new FlickrFetcher().fetchPhotos(params[0], params[1]);
         }
 
         @Override
         protected void onPostExecute(ArrayList<FlickrPhoto> photos) {
-            mPhotos = photos;
-            setupAdapter();
+            mPhotos.addAll(photos);
+            ((PhotoAdapter)getListAdapter()).notifyDataSetChanged();
+            //setupAdapter();
         }
     }
 
@@ -140,5 +165,18 @@ public class FlickrListFragment extends ListFragment {
         }
     }
 
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem,
+                         int visibleItemCount, int totalItemCount) {
+        // do nothing. Override required by abstract OnScrollListener
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if(view.getLastVisiblePosition() == (mPhotos.size())) {
+            Log.i(TAG, "Last position seen");
+            new FetchItemsTask().execute(mSearchString, Integer.toString(++mCurrentPage));
+        }
+    }
 
 }

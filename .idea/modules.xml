@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FlickrContacts.iml" filepath="$PROJECT_DIR$/FlickrContacts.iml" />
       <module fileurl="file://$PROJECT_DIR$/FlickrContacts/FlickrContacts-FlickrContacts.iml" filepath="$PROJECT_DIR$/FlickrContacts/FlickrContacts-FlickrContacts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FlickrContactsAndroid.iml" filepath="$PROJECT_DIR$/FlickrContactsAndroid.iml" />
     </modules>
   </component>
 </project>

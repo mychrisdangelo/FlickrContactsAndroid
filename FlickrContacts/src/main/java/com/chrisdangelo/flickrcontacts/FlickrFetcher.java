@@ -25,6 +25,7 @@ import java.util.ArrayList;
  * http://developer.android.com/training/basics/network-ops/connecting.html
  * http://developer.android.com/training/basics/network-ops/xml.html
  * http://developer.android.com/reference/org/xmlpull/v1/XmlPullParser.html
+ * http://www.flickr.com/services/api/flickr.photos.search.html
  */
 public class FlickrFetcher {
     private static final String TAG = "FlickrFetchrLogTag";
@@ -71,7 +72,7 @@ public class FlickrFetcher {
     }
 
 
-    public ArrayList<FlickrPhoto> fetchPhotos(String searchTerm) {
+    public ArrayList<FlickrPhoto> fetchPhotos(String searchTerm, String pageNumber) {
         ArrayList<FlickrPhoto> photos = new ArrayList<FlickrPhoto>();
 
         try {
@@ -82,6 +83,7 @@ public class FlickrFetcher {
                     .appendQueryParameter("tags", searchTerm)
                     .appendQueryParameter("extras", EXTRAS)
                     .appendQueryParameter("per_page", PER_PAGE)
+                    .appendQueryParameter("page", pageNumber)
                     .build().toString();
             Log.i(TAG, "Url being sent: " + url);
             String xmlString = getUrl(url);
