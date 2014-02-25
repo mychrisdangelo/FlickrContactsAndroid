@@ -40,16 +40,11 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
     private static final String TAG = "FlickrListFragmentLogTag";
     private String mSearchString;
     private int mCurrentPage = 0;
+    private boolean mCurrentlyLoading;
+    private boolean mFooterViewExists;
     private ArrayList<FlickrPhoto> mPhotos;
     public static final String EXTRA_SEARCH_STRING = "com.chrisdangelo.flickrcontacts.search_string";
     ThumbnailDownloader<ImageView> mThumbnailThread;
-
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-//    {
-//        View view = inflater.inflate(R.layout.list_fragment, container, false);
-//        return view;
-//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +52,7 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
         mSearchString = (String)getActivity().getIntent().getSerializableExtra(EXTRA_SEARCH_STRING);
         Log.i(TAG, "List received " + mSearchString);
 
+        mFooterViewExists = false;
         mPhotos = new ArrayList<FlickrPhoto>();
         new FetchItemsTask().execute(mSearchString, Integer.toString(mCurrentPage));
 
@@ -77,12 +73,12 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
 
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstance) {
+    private void addLoadingFooterView() {
         ListView lv = getListView();
         View v = getActivity().getLayoutInflater().inflate(R.layout.list_footer, null);
         lv.addFooterView(v);
         lv.setOnScrollListener(this);
+        mFooterViewExists = true;
     }
 
     @Override
@@ -112,6 +108,7 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
     private class FetchItemsTask extends AsyncTask<String, Void, ArrayList<FlickrPhoto>> {
         @Override
         protected ArrayList<FlickrPhoto> doInBackground(String... params) {
+            mCurrentlyLoading = true;
             return new FlickrFetcher().fetchPhotos(params[0], params[1]);
         }
 
@@ -119,7 +116,10 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
         protected void onPostExecute(ArrayList<FlickrPhoto> photos) {
             mPhotos.addAll(photos);
             ((PhotoAdapter)getListAdapter()).notifyDataSetChanged();
-            //setupAdapter();
+            mCurrentlyLoading = false;
+            if (!mFooterViewExists) {
+                addLoadingFooterView();
+            }
         }
     }
 
@@ -173,9 +173,13 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
+        // wait until we see the footer
         if(view.getLastVisiblePosition() == (mPhotos.size())) {
             Log.i(TAG, "Last position seen");
-            new FetchItemsTask().execute(mSearchString, Integer.toString(++mCurrentPage));
+            if (!mCurrentlyLoading) {
+                Log.i(TAG, "End of List Loading Triggered");
+                new FetchItemsTask().execute(mSearchString, Integer.toString(++mCurrentPage));
+            }
         }
     }
 
