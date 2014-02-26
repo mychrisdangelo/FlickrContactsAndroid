@@ -37,9 +37,10 @@ import java.util.ArrayList;
  * http://stackoverflow.com/questions/21374432/cant-set-a-custom-listview-on-listfragment
  * https://github.com/shontauro/android-pulltorefresh-and-loadmore
  *
- * NOTE: The essential design of the images loading "on the fly" is based on Ch. 27. The design of
- * this class is fairly generic but I have provided verbose comments to fully demonstrate understanding
- * of my implementation and the techniques I learned from Chapter 26 & 27.
+ * NOTE: The essential design of the images loading by subclassing HandlerThread
+ * is based on Ch. 27. The design of this class is fairly generic but I have provided verbose
+ * comments to fully demonstrate understanding of my implementation and the techniques I
+ * learned from Chapter 26 & 27.
  */
 public class FlickrListFragment extends ListFragment implements OnScrollListener {
     private static final String TAG = "FlickrListFragmentLogTag";
@@ -59,6 +60,10 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
 
         mFooterViewExists = false;
         mPhotos = new ArrayList<FlickrPhoto>();
+        /*
+         * perform fetch request in alternate thread
+         * behaviro after done will be handled by the subclass FetchItemTask
+         */
         new FetchItemsTask().execute(mSearchString, Integer.toString(mCurrentPage));
 
         /*
@@ -99,6 +104,7 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mThumbnailThread.clearQueue();
         mThumbnailThread.quit();
         Log.i(TAG, "Background thread destroyed");
     }
@@ -150,12 +156,21 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
      *
      */
     private class FetchItemsTask extends AsyncTask<String, Void, ArrayList<FlickrPhoto>> {
+        /*
+         * Android disallows all networking on the main thread in Honecomb and later
+         * You will get networkOnMainThreadException if you try.
+         *
+         * ... refers to variable length arguments accessible via [] operator
+         */
         @Override
         protected ArrayList<FlickrPhoto> doInBackground(String... params) {
             mCurrentlyLoading = true;
             return new FlickrFetcher().fetchPhotos(params[0], params[1]);
         }
 
+        /*
+         * onPostExecute() is run on the main UI thread.
+         */
         @Override
         protected void onPostExecute(ArrayList<FlickrPhoto> photos) {
             mPhotos.addAll(photos);
@@ -165,22 +180,42 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
                 addLoadingFooterView();
             }
         }
+
+        /*
+         * Notes regarding AsyncTask functionality not used:
+         *
+         * If you call AsynTask.cancle(false) AsyncTask will politely set isCancelled()
+         * to true. The AsyncTask can then check isCancelled() insdie of doInBackground
+         * and elect to finish prematurely. If you call AsyncTask.cancel(true) it will end
+         * doInBackground() abruptly.
+         *
+         * publishProgress() called from doInBackground() will trigger onProgressUpdate()
+         * which will be called on the UI thread.
+         */
     }
 
     private class PhotoAdapter extends ArrayAdapter<FlickrPhoto> {
         public PhotoAdapter(ArrayList<FlickrPhoto> photos) {
+            /*
+             * The call to superclass constructor is to hook up the dataset
+             * 0 refers to the layout id. We are not using a pre-defined layout file.
+             */
             super(getActivity(), 0, photos);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            // if we weren't given a view, inflate one.
             if (convertView == null) {
                 convertView = getActivity().getLayoutInflater()
                         .inflate(R.layout.list_item_photo, null);
             }
 
-            // Set all the lightweight items. The photos we will queue
-            // for another thread to pick up
+            /*
+             * Set all the lightweight items. The photos we will queue
+             * for another thread to take care of hand back the image when its
+             * ready.
+             */
             FlickrPhoto p = getItem(position);
 
             TextView titleTextView = (TextView)convertView
@@ -215,9 +250,14 @@ public class FlickrListFragment extends ListFragment implements OnScrollListener
         // do nothing. Override required by abstract OnScrollListener
     }
 
+    /*
+     * When we see the footer scrolled to and stopped we should load more items
+     * We may change state while we are at the footer so in order to make sure
+     * that we don't trigger several fetches of new photos we only ask once
+     * per viewing of the bottom of the list.
+     */
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        // wait until we see the footer
         if(view.getLastVisiblePosition() == (mPhotos.size())) {
             Log.i(TAG, "Last position seen");
             if (!mCurrentlyLoading) {

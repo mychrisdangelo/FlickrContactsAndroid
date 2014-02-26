@@ -80,7 +80,6 @@ public class SearchFlickr extends ActionBarActivity {
             View rootView = inflater.inflate(R.layout.fragment_search_flickr, container, false);
 
             mSearchTextField = (EditText)rootView.findViewById(R.id.search_text_field);
-            // TODO text will be lost on return this activity
 
             mContactsButton = (Button)rootView.findViewById(R.id.pick_contacts_button);
             mContactsButton.setOnClickListener(new View.OnClickListener() {
